@@ -864,6 +864,7 @@ export const useGlobalAudio = () => {
   };
 
   // Listen for localStorage changes to stop speech when muted
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => {
     const handleStorageChange = (e: StorageEvent) => {
       if (e.key === SPEECH_SETTINGS_KEY && e.newValue) {
@@ -933,7 +934,7 @@ export const useGlobalAudio = () => {
       // Don't stop speech during component re-renders or route changes
       // The speech will continue playing across route changes
     };
-  }, [isPlaying, currentScenario, currentMode]);
+  }, [isPlaying, currentScenario, currentMode, startSpeech]);
 
   return {
     isPlaying,

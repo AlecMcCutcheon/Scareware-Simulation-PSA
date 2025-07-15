@@ -688,6 +688,7 @@ const ScarewareCollection: React.FC<ScarewareCollectionProps> = ({
   }, []);
 
   // Reset Malwarebytes state when phase changes
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   React.useEffect(() => {
     if (currentPhase === 'malwarebytes') {
       setScanProgress(0);
