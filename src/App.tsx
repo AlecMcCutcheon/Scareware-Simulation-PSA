@@ -121,7 +121,7 @@ const AppContent: React.FC = () => {
 
   const resetSimulation = () => {
     // Real scareware technique: Full page reload to completely clear all hijacking
-    window.location.href = '/';
+    window.location.href = window.location.origin + window.location.pathname + '#/';
   };
 
 
