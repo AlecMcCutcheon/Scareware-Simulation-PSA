@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "Educational simulation of scareware techniques to help users understand and avoid real threats",
   "private": true,
-  "homepage": "https://AlecMcCutcheon.github.io/Scareware-Simulation-PSA",
+  "homepage": "https://alecmccutcheon.github.io",
   "dependencies": {
     "@types/jquery": "^3.5.32",
     "@types/node": "^18.15.0",
