@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 
 // Speech settings key for localStorage
 const SPEECH_SETTINGS_KEY = 'scareware_speech_settings';
@@ -613,7 +613,7 @@ export const useGlobalAudio = () => {
   }, []);
 
   // Function to check if speech is muted from localStorage
-  const isSpeechMuted = (): boolean => {
+  const isSpeechMuted = useCallback((): boolean => {
     try {
       const saved = localStorage.getItem(SPEECH_SETTINGS_KEY);
       if (saved) {
@@ -624,10 +624,10 @@ export const useGlobalAudio = () => {
       console.warn('Failed to load speech settings from localStorage:', error);
     }
     return false; // Default to unmuted
-  };
+  }, []);
 
   // Function to force stop all speech
-  const forceStopSpeech = () => {
+  const forceStopSpeech = useCallback(() => {
     // Cancel all speech synthesis
     speechSynthesis.cancel();
     
@@ -644,7 +644,7 @@ export const useGlobalAudio = () => {
     shouldLoopRef.current = false;
     
     setIsPlaying(false);
-  };
+  }, []);
 
   // Function to force stop all speech and clear scenario info
   const forceStopSpeechAndClear = () => {
@@ -655,56 +655,8 @@ export const useGlobalAudio = () => {
     currentModeRef.current = 'normal';
   };
 
-  // Function to start speech for a specific scenario and mode
-  const startSpeech = (scenario: string, mode: 'normal' | 'escalation' = 'normal', loop: boolean = false) => {
-    
-    // Prevent multiple simultaneous calls
-    if (isStartingSpeechRef.current) {
-      return;
-    }
-    isStartingSpeechRef.current = true;
-    
-    // Always set the scenario information, even if speech is muted
-    setCurrentScenario(scenario);
-    setCurrentMode(mode);
-    currentScenarioRef.current = scenario;
-    currentModeRef.current = mode;
-    shouldLoopRef.current = loop;
-    shouldLoopRefOriginal.current = loop; // Store the original loop setting
-    
-    // Check if speech is muted - if so, don't start speech but keep scenario info
-    const muted = isSpeechMuted();
-    if (muted) {
-      isStartingSpeechRef.current = false;
-      return;
-    }
-
-    // Check if user has interacted - if not, don't start speech but keep scenario info
-    if (!userInteractedRef.current) {
-      isStartingSpeechRef.current = false;
-      return;
-    }
-    
-    // Stop any existing speech first, but add a small delay to prevent interruption
-    if (currentSpeechRef.current) {
-    forceStopSpeech();
-      // Add a small delay to ensure the previous speech is fully stopped
-      setTimeout(() => {
-        // Only proceed if this is still the current scenario (user hasn't navigated away)
-        if (currentScenario === scenario) {
-          startSpeechInternal(scenario, mode, loop);
-        }
-        isStartingSpeechRef.current = false;
-      }, 100);
-      return;
-    }
-    
-    // If no existing speech, start immediately
-    startSpeechInternal(scenario, mode, loop);
-  };
-
   // Internal function to actually start speech (separated to avoid recursion)
-  const startSpeechInternal = (scenario: string, mode: 'normal' | 'escalation' = 'normal', loop: boolean = false) => {
+  const startSpeechInternal = useCallback((scenario: string, mode: 'normal' | 'escalation' = 'normal', loop: boolean = false) => {
     
     const scenarios = SPEECH_SCENARIOS[scenario];
     if (!scenarios || !scenarios[mode as keyof typeof scenarios] || scenarios[mode as keyof typeof scenarios].length === 0) {
@@ -804,7 +756,7 @@ export const useGlobalAudio = () => {
       if (shouldLoopRef.current && loop) {
         speechTimeoutRef.current = setTimeout(() => {
           if (shouldLoopRef.current) {
-            startSpeech(scenario, mode, true); // Recursive call with loop enabled
+            startSpeechInternal(scenario, mode, true); // Recursive call with loop enabled
           }
         }, 2000); // 2 second delay between loops
       }
@@ -825,7 +777,49 @@ export const useGlobalAudio = () => {
     } catch (error) {
       isStartingSpeechRef.current = false; // Reset flag on error
     }
-  };
+  }, [setIsPlaying]);
+
+  // Wrap startSpeech in useCallback to satisfy exhaustive-deps
+  const startSpeech = useCallback((scenario: string, mode: 'normal' | 'escalation' = 'normal', loop: boolean = false) => {
+    // Prevent multiple simultaneous calls
+    if (isStartingSpeechRef.current) {
+      return;
+    }
+    isStartingSpeechRef.current = true;
+    // Always set the scenario information, even if speech is muted
+    setCurrentScenario(scenario);
+    setCurrentMode(mode);
+    currentScenarioRef.current = scenario;
+    currentModeRef.current = mode;
+    shouldLoopRef.current = loop;
+    shouldLoopRefOriginal.current = loop; // Store the original loop setting
+    // Check if speech is muted - if so, don't start speech but keep scenario info
+    const muted = isSpeechMuted();
+    if (muted) {
+      isStartingSpeechRef.current = false;
+      return;
+    }
+    // Check if user has interacted - if not, don't start speech but keep scenario info
+    if (!userInteractedRef.current) {
+      isStartingSpeechRef.current = false;
+      return;
+    }
+    // Stop any existing speech first, but add a small delay to prevent interruption
+    if (currentSpeechRef.current) {
+      forceStopSpeech();
+      // Add a small delay to ensure the previous speech is fully stopped
+      setTimeout(() => {
+        // Only proceed if this is still the current scenario (user hasn't navigated away)
+        if (currentScenario === scenario) {
+          startSpeechInternal(scenario, mode, loop);
+        }
+        isStartingSpeechRef.current = false;
+      }, 100);
+      return;
+    }
+    // If no existing speech, start immediately
+    startSpeechInternal(scenario, mode, loop);
+  }, [isSpeechMuted, forceStopSpeech, startSpeechInternal, setCurrentScenario, setCurrentMode, currentScenario, userInteractedRef, isStartingSpeechRef, currentSpeechRef, currentScenarioRef, currentModeRef, shouldLoopRef, shouldLoopRefOriginal]);
 
   // Function to stop speech
   const stopSpeech = () => {
