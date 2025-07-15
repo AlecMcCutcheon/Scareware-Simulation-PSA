@@ -63,25 +63,7 @@ const FloatingTooltip: React.FC<FloatingTooltipProps> = ({ mousePosition }) => {
           const classInfo = getClassDefinition(classId);
           if (classInfo) {
             setTooltipContent(classInfo);
-            
-            // Find the largest parent element with data-class-id for better positioning
-            let positioningElement = elementWithClass;
-            const parentWithClass = elementWithClass.parentElement?.closest('[data-class-id]') as HTMLElement;
-            
-            // Use the parent element if it exists and is larger than the current element
-            if (parentWithClass) {
-              const currentRect = elementWithClass.getBoundingClientRect();
-              const parentRect = parentWithClass.getBoundingClientRect();
-              
-              // Use parent if it's significantly larger (more than 2x the area)
-              const currentArea = currentRect.width * currentRect.height;
-              const parentArea = parentRect.width * parentRect.height;
-              
-              if (parentArea > currentArea * 2) {
-                positioningElement = parentWithClass;
-              }
-            }
-            // setHoveredElement(positioningElement); // OLD CODE - KEEP UNTIL CONFIRMED WORKING
+            // The following logic for positioningElement is no longer needed and has been removed
           }
         }
       }
