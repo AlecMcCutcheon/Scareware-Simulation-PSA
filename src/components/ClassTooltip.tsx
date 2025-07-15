@@ -160,7 +160,7 @@ export function ClassTooltip({ className = '' }: ClassTooltipProps) {
       className={`fixed w-80 rounded-lg shadow-xl border p-4 max-h-96 overflow-y-auto ${className}`}
       style={{
         ...tooltipStyle,
-        zIndex: 99999,
+        zIndex: 9999999,
         backgroundColor: 'red', // Temporary: make it bright red for debugging
         border: '3px solid yellow', // Temporary: make border very visible
         color: 'white', // Temporary: white text on red background

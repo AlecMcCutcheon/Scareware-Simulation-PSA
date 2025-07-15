@@ -19,6 +19,8 @@ const FloatingTooltip: React.FC<FloatingTooltipProps> = ({ mousePosition }) => {
   const lastTouchPosition = React.useRef<{ x: number; y: number } | null>(null);
   // Track if finger is currently down on mobile
   const isTouching = React.useRef(false);
+  // Tooltip hide delay to prevent flickering
+  const hideTimeout = React.useRef<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
     // Check fullscreen state
@@ -51,6 +53,12 @@ const FloatingTooltip: React.FC<FloatingTooltipProps> = ({ mousePosition }) => {
       
       if (!isMobile) {
         if (classId) {
+          // Clear any existing hide timeout
+          if (hideTimeout.current) {
+            clearTimeout(hideTimeout.current);
+            hideTimeout.current = null;
+          }
+          
           // Get class info from the proper class framework
           const classInfo = getClassDefinition(classId);
           if (classInfo) {
@@ -81,8 +89,14 @@ const FloatingTooltip: React.FC<FloatingTooltipProps> = ({ mousePosition }) => {
     };
 
     const handleMouseOut = () => {
-      setTooltipContent(null);
-      setHoveredElement(null);
+      // Set a timeout to hide the tooltip after 300ms to prevent flickering
+      if (hideTimeout.current) {
+        clearTimeout(hideTimeout.current);
+      }
+      hideTimeout.current = setTimeout(() => {
+        setTooltipContent(null);
+        setHoveredElement(null);
+      }, 300);
     };
 
     const handleMouseMove = (event: MouseEvent) => {
@@ -91,16 +105,14 @@ const FloatingTooltip: React.FC<FloatingTooltipProps> = ({ mousePosition }) => {
       const isOverSimulationControls = target.closest('.simulation-controls') !== null;
       const isOverTooltip = target.closest('[data-tooltip="true"]') !== null;
       
-      // In fullscreen mode, also check for scareware overlay elements
-      const isOverScarewareOverlay = isFullscreen && (
-        target.closest('.fake-browser-bar') !== null ||
-        target.closest('[data-browser-bar="true"]') !== null ||
-        target.closest('.browser-hijacking-overlay') !== null ||
-        target.closest('.scareware-overlay') !== null ||
-        target.closest('.fullscreen-overlay') !== null
-      );
-      
-      if ((isOverSimulationControls || isOverScarewareOverlay) && !isOverTooltip) {
+      // Only hide tooltips when over simulation controls, not over scareware overlays
+      // This allows tooltips to show in fullscreen mode over scareware elements
+      if (isOverSimulationControls && !isOverTooltip) {
+        // Clear any existing hide timeout
+        if (hideTimeout.current) {
+          clearTimeout(hideTimeout.current);
+          hideTimeout.current = null;
+        }
         setTooltipContent(null);
         setHoveredElement(null);
       }
@@ -180,6 +192,10 @@ const FloatingTooltip: React.FC<FloatingTooltipProps> = ({ mousePosition }) => {
 
     return () => {
       clearInterval(interval);
+      // Clear any pending hide timeout
+      if (hideTimeout.current) {
+        clearTimeout(hideTimeout.current);
+      }
       const elementsWithClasses = document.querySelectorAll('[data-class-id]');
       elementsWithClasses.forEach(element => {
         element.removeEventListener('mouseover', handleMouseOver);
@@ -225,49 +241,41 @@ const FloatingTooltip: React.FC<FloatingTooltipProps> = ({ mousePosition }) => {
       return { left, top, bottom, width };
     }
     const tooltipWidth = 400; // Increased for more content
-    const tooltipHeight = 200; // Increased for more content
     const padding = 20; // Padding from screen edges
-    const elementPadding = 10; // Padding from hovered element
+    
+    // Calculate actual tooltip height based on content
+    let tooltipHeight = 200; // Default fallback
+    if (tooltipContent) {
+      // Estimate height based on content structure
+      let estimatedHeight = 80; // Base height for header and padding
+      
+      // Add height for description
+      if (tooltipContent.description) {
+        estimatedHeight += 40;
+      }
+      
+      // Add height for notes
+      if (tooltipContent.notes && tooltipContent.notes.length > 0) {
+        const mainNote = tooltipContent.notes[0];
+        if (mainNote.description) estimatedHeight += 30;
+        if (mainNote.examples && mainNote.examples.length > 0) estimatedHeight += 40;
+        if (mainNote.tips && mainNote.tips.length > 0) estimatedHeight += 40;
+      }
+      
+      // Add height for context box (desktop only)
+      if (!isMobile) {
+        estimatedHeight += 50;
+      }
+      
+      tooltipHeight = Math.min(estimatedHeight, 300); // Cap at 300px max
+    }
     
     // Start with mouse position (bottom right)
     let left = mousePosition.x + 20;
-    let top: number | undefined = 32; // Default: 32px from top
-    // let bottom: number | undefined = undefined;
+    let top = mousePosition.y + 20;
     
-    // If we have a hovered element, try to avoid overlapping with it
-    if (hoveredElement) {
-      const elementRect = hoveredElement.getBoundingClientRect();
-      
-      // Check if tooltip would overlap with the element
-      const tooltipRight = left + tooltipWidth;
-      const tooltipBottom = top + tooltipHeight;
-      // const elementRight = elementRect.right;
-      // const elementBottom = elementRect.bottom;
-      
-      // If tooltip overlaps horizontally, try positioning to the left
-      if (left < elementRect.right + elementPadding && tooltipRight > elementRect.left - elementPadding) {
-        // Try left side first
-        if (mousePosition.x - tooltipWidth - elementPadding > 0) {
-          left = mousePosition.x - tooltipWidth - elementPadding;
-        } else {
-          // If left side doesn't work, try right side
-          left = elementRect.right + elementPadding;
-        }
-      }
-      
-      // If tooltip overlaps vertically, try positioning above
-      if (top < elementRect.bottom + elementPadding && tooltipBottom > elementRect.top - elementPadding) {
-        // Try above first
-        if (mousePosition.y - tooltipHeight - elementPadding > 0) {
-          top = mousePosition.y - tooltipHeight - elementPadding;
-        } else {
-          // If above doesn't work, try below
-          top = elementRect.bottom + elementPadding;
-        }
-      }
-    }
-    
-    // Check right edge
+    // Simple edge detection to keep tooltip on screen
+    // Check right edge first
     if (left + tooltipWidth > window.innerWidth - padding) {
       left = mousePosition.x - tooltipWidth - 20;
     }
@@ -277,20 +285,58 @@ const FloatingTooltip: React.FC<FloatingTooltipProps> = ({ mousePosition }) => {
       left = padding;
     }
     
-    // Check bottom edge
-    if (top + tooltipHeight > window.innerHeight - padding) {
-      top = mousePosition.y - tooltipHeight - 20;
+    // Check bottom edge - smooth positioning based on distance from bottom
+    const distanceFromBottom = window.innerHeight - mousePosition.y;
+    const sensitivityBuffer = 75; // Extra buffer for more comfortable positioning
+    const minDistanceNeeded = tooltipHeight + padding + sensitivityBuffer;
+    
+    console.log(`Bottom edge check: distanceFromBottom=${distanceFromBottom}, calculatedTooltipHeight=${tooltipHeight}, padding=${padding}, minDistanceNeeded=${minDistanceNeeded}`);
+    
+    // Smooth positioning: if mouse is too close to bottom, gradually move tooltip up
+    if (distanceFromBottom < minDistanceNeeded) {
+      const originalTop = top;
+      // Calculate how much we need to move up to stay within the safe zone
+      const neededOffset = minDistanceNeeded - distanceFromBottom;
+      top = mousePosition.y - neededOffset;
+      console.log(`Smooth positioning: originalTop=${originalTop}, neededOffset=${neededOffset}, newTop=${top}`);
+      
+      // If that would put it above the screen, position it at the top with padding
+      if (top < padding) {
+        const beforeClamp = top;
+        top = padding;
+        console.log(`Clamping to top: beforeClamp=${beforeClamp}, afterClamp=${top}`);
+      }
     }
     
-    // Check top edge
+    // Check top edge - if tooltip would go above screen, position it below the cursor
     if (top < padding) {
+      top = mousePosition.y + 20;
+    }
+    
+    // Final safety check - ensure tooltip is completely within viewport
+    if (left + tooltipWidth > window.innerWidth) {
+      left = window.innerWidth - tooltipWidth - padding;
+    }
+    if (left < 0) {
+      left = padding;
+    }
+    if (top < 0) {
       top = padding;
+    }
+    
+    // Critical bottom edge fix - ensure tooltip never goes below screen
+    if (top + tooltipHeight > window.innerHeight - padding) {
+      top = window.innerHeight - tooltipHeight - padding;
     }
     
     return { left, top };
   };
 
   const position = calculatePosition();
+  
+  // Debug logging for mouse position and distance from bottom
+  const distanceFromBottom = window.innerHeight - mousePosition.y;
+  console.log(`Mouse position: (${mousePosition.x}, ${mousePosition.y}), Distance from bottom: ${distanceFromBottom}px, Tooltip position: (${position.left}, ${position.top})`);
 
   // Only show tooltip when there's content
   if (!tooltipContent) {
@@ -322,7 +368,7 @@ const FloatingTooltip: React.FC<FloatingTooltipProps> = ({ mousePosition }) => {
         border: '1px solid #555',
         borderRadius: '6px',
         padding: '12px 16px',
-        zIndex: 99999,
+        zIndex: 9999999,
         boxShadow: '0 4px 12px rgba(0,0,0,0.4)',
         backdropFilter: 'blur(10px)',
         minWidth: isMobile ? undefined : '280px',
@@ -336,8 +382,8 @@ const FloatingTooltip: React.FC<FloatingTooltipProps> = ({ mousePosition }) => {
         overflow: 'visible',
         marginLeft: isMobile ? 'auto' : undefined,
         marginRight: isMobile ? 'auto' : undefined,
+        ...(isMobile && typeof position.bottom === 'number' ? { bottom: position.bottom } : {}),
         ...(typeof position.top === 'number' ? { top: position.top } : {}),
-        ...(typeof position.bottom === 'number' ? { bottom: position.bottom } : {}),
       }}
     >
       <div style={{ 

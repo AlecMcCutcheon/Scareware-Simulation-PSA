@@ -144,7 +144,6 @@ const SimulationControls: React.FC<SimulationControlsProps> = ({
   // Save transparency to localStorage whenever it changes
   useEffect(() => {
     localStorage.setItem('simulationControlsTransparency', JSON.stringify(transparency));
-    console.log('Transparency changed to:', transparency);
   }, [transparency]);
 
   const dragOffset = useRef({ x: 0, y: 0 });
@@ -222,9 +221,6 @@ const SimulationControls: React.FC<SimulationControlsProps> = ({
   
 
   const visibleSections = getVisibleSections();
-  
-  // Debug logging to see what's happening
-  console.log(`Current content level: ${contentLevel}, horizontalLayout: ${visibleSections.horizontalLayout}, horizontalButtonLayout: ${visibleSections.horizontalButtonLayout}, compactMode: ${visibleSections.compactMode}`);
 
   const handleMouseDown = (e: React.MouseEvent<HTMLDivElement> | React.TouchEvent<HTMLDivElement>) => {
     // Don't start dragging if clicking on interactive elements
@@ -308,7 +304,6 @@ const SimulationControls: React.FC<SimulationControlsProps> = ({
         
         if (targetLevel !== contentLevel) {
           setContentLevel(targetLevel);
-          console.log(`Changing to content level: ${targetLevel} (deltaY: ${deltaY}, levelChange: ${levelChange})`);
         }
       }
     };

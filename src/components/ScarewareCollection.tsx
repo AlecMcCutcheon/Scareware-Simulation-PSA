@@ -1776,6 +1776,7 @@ const ScarewareCollection: React.FC<ScarewareCollectionProps> = ({
                     maxWidth: '200px',
                     objectFit: 'contain'
                   }}
+                  data-class-id="fake-branding"
                 />
                 <h2 style={{ 
                   fontSize: '1.5rem', 
@@ -3583,6 +3584,7 @@ const ScarewareCollection: React.FC<ScarewareCollectionProps> = ({
                     maxWidth: '200px',
                     objectFit: 'contain'
                   }}
+                  data-class-id="fake-branding"
                 />
                 <h2 style={{ 
                   fontSize: '1.5rem', 
