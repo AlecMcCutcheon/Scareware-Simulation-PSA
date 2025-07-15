@@ -501,7 +501,7 @@ export const useBrowserHijacking = (options: UseBrowserHijackingOptions = {}) =>
       // Real scareware technique: jQuery escape key detection and fullscreen trigger
       const setupJQueryEscapeDetection = () => {
         $(document).keyup(function(e) {
-          if (e.keyCode == 27) {
+          if (e.keyCode === 27) {
             // Check if already in fullscreen before attempting to trigger it
             if (document.fullscreenElement || 
                 (document as any).webkitFullscreenElement || 

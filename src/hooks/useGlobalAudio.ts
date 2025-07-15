@@ -730,12 +730,12 @@ export const useGlobalAudio = () => {
       // Use British female voice for Malwarebytes
       preferredVoice = voices.find(voice => 
         voice.name.includes('Samantha') ||
-        voice.name.includes('British') && voice.name.includes('Female') ||
-        voice.name.includes('UK') && voice.name.includes('Female') ||
-        voice.name.includes('English') && voice.name.includes('Female') ||
+        (voice.name.includes('British') && voice.name.includes('Female')) ||
+        (voice.name.includes('UK') && voice.name.includes('Female')) ||
+        (voice.name.includes('English') && voice.name.includes('Female')) ||
         voice.name.includes('Victoria') ||
         voice.name.includes('Zira') ||
-        voice.name.includes('Microsoft') && voice.name.includes('Female') ||
+        (voice.name.includes('Microsoft') && voice.name.includes('Female')) ||
         voice.name.includes('Hazel') ||
         voice.name.includes('Libby')
       );
@@ -747,7 +747,7 @@ export const useGlobalAudio = () => {
         voice.name.includes('Siri') ||
         voice.name.includes('Cortana') ||
         voice.name.includes('Alexa') ||
-        voice.name.includes('Microsoft') && voice.name.includes('Female') ||
+        (voice.name.includes('Microsoft') && voice.name.includes('Female')) ||
         voice.name.includes('Samantha') ||
         voice.name.includes('Victoria') ||
         voice.name.includes('Zira')
@@ -755,11 +755,11 @@ export const useGlobalAudio = () => {
     } else {
       // Use male voices for all other scenarios
       preferredVoice = voices.find(voice => 
-        voice.name.includes('Microsoft') && voice.name.includes('David') ||
+        (voice.name.includes('Microsoft') && voice.name.includes('David')) ||
         voice.name.includes('David') ||
         voice.name.includes('Mark') ||
         voice.name.includes('James') ||
-        voice.name.includes('Microsoft') && voice.name.includes('Male') ||
+        (voice.name.includes('Microsoft') && voice.name.includes('Male')) ||
         voice.name.includes('Alex') ||
         voice.name.includes('Tom') ||
         voice.name.includes('Daniel')

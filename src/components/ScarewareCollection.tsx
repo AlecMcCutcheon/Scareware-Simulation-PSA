@@ -631,7 +631,7 @@ const ScarewareCollection: React.FC<ScarewareCollectionProps> = ({
       
       return newScanTime;
     });
-  }, [threatsDetected, pupsDetected]);
+  }, []);
   
   React.useEffect(() => {
     if (currentPhase !== 'malwarebytes' || scanPhase !== 'escalate') return;
@@ -846,7 +846,7 @@ const ScarewareCollection: React.FC<ScarewareCollectionProps> = ({
         }, SCAN_DURATION_SECONDS * 1000);
       }, 100);
     }
-  }, [currentPhase, isMobile, isAndroid, isIOS]);
+  }, [currentPhase, isMobile]);
 
   // Handle speech transitions for all scareware phases (immediate transitions)
   React.useEffect(() => {
@@ -897,13 +897,13 @@ const ScarewareCollection: React.FC<ScarewareCollectionProps> = ({
         // OLD CODE - KEEP UNTIL CONFIRMED WORKING
         // startSpeechRef.current('malwarebytes', 'escalation', true); // Loop escalation speech
         // NEW CODE - TESTING
-        startSpeechRef.current(malwarebytesVoiceScenario, 'escalation', true); // Loop escalation speech
+        startSpeechRef.current('malwarebytes', 'escalation', true); // Loop escalation speech
       } else if (scanPhase === 'scanning') {
         updateCurrentModeRef.current('normal');
         // OLD CODE - KEEP UNTIL CONFIRMED WORKING
         // startSpeechRef.current('malwarebytes', 'normal', true); // Loop normal speech
         // NEW CODE - TESTING
-        startSpeechRef.current(malwarebytesVoiceScenario, 'normal', true); // Loop normal speech
+        startSpeechRef.current('malwarebytes', 'normal', true); // Loop normal speech
       }
     }
   }, [currentPhase, scanPhase, showContent]);
@@ -1317,12 +1317,12 @@ const ScarewareCollection: React.FC<ScarewareCollectionProps> = ({
   }
 
   // Determine the correct Malwarebytes voice scenario for the current device
-  let malwarebytesVoiceScenario = 'malwarebytes';
-  if (isMobile && isIOS) {
-    malwarebytesVoiceScenario = 'malwarebytes_ios';
-  } else if (isMobile && isAndroid) {
-    malwarebytesVoiceScenario = 'malwarebytes_android';
-  }
+  // let malwarebytesVoiceScenario = 'malwarebytes';
+  // if (isMobile && isIOS) {
+  //   malwarebytesVoiceScenario = 'malwarebytes_ios';
+  // } else if (isMobile && isAndroid) {
+  //   malwarebytesVoiceScenario = 'malwarebytes_android';
+  // }
 
   // Determine if we should use the short escalation message (mobile or small desktop)
   const isSmallScreen = isMobile || (typeof window !== 'undefined' && window.innerWidth <= 700);
