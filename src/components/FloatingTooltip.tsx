@@ -10,7 +10,7 @@ const FloatingTooltip: React.FC<FloatingTooltipProps> = ({ mousePosition }) => {
   // Mobile detection (move to top)
   const isMobile = /Mobi|Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
   const [tooltipContent, setTooltipContent] = useState<ClassDefinition | null>(null);
-  const [hoveredElement, setHoveredElement] = useState<HTMLElement | null>(null);
+  // const [hoveredElement, setHoveredElement] = useState<HTMLElement | null>(null); // OLD CODE - KEEP UNTIL CONFIRMED WORKING
   const [isFullscreen, setIsFullscreen] = useState(false);
   // Mobile long-press state
   const longPressTimeout = React.useRef<NodeJS.Timeout | null>(null);
@@ -81,8 +81,7 @@ const FloatingTooltip: React.FC<FloatingTooltipProps> = ({ mousePosition }) => {
                 positioningElement = parentWithClass;
               }
             }
-            
-            setHoveredElement(positioningElement);
+            // setHoveredElement(positioningElement); // OLD CODE - KEEP UNTIL CONFIRMED WORKING
           }
         }
       }
@@ -95,7 +94,7 @@ const FloatingTooltip: React.FC<FloatingTooltipProps> = ({ mousePosition }) => {
       }
       hideTimeout.current = setTimeout(() => {
         setTooltipContent(null);
-        setHoveredElement(null);
+        // setHoveredElement(null); // OLD CODE - KEEP UNTIL CONFIRMED WORKING
       }, 300);
     };
 
@@ -114,7 +113,7 @@ const FloatingTooltip: React.FC<FloatingTooltipProps> = ({ mousePosition }) => {
           hideTimeout.current = null;
         }
         setTooltipContent(null);
-        setHoveredElement(null);
+        // setHoveredElement(null); // OLD CODE - KEEP UNTIL CONFIRMED WORKING
       }
     };
 
@@ -145,7 +144,7 @@ const FloatingTooltip: React.FC<FloatingTooltipProps> = ({ mousePosition }) => {
             const classInfo = getClassDefinition(classId);
             if (classInfo) {
               setTooltipContent(classInfo);
-              setHoveredElement(elementWithClass);
+              // setHoveredElement(elementWithClass); // OLD CODE - KEEP UNTIL CONFIRMED WORKING
             }
           }
         }, 500); // 500ms long-press threshold
@@ -161,7 +160,7 @@ const FloatingTooltip: React.FC<FloatingTooltipProps> = ({ mousePosition }) => {
       // Hide tooltip if touch ends and not a long press
       setTimeout(() => {
         setTooltipContent(null);
-        setHoveredElement(null);
+        // setHoveredElement(null); // OLD CODE - KEEP UNTIL CONFIRMED WORKING
       }, 100);
     };
 
