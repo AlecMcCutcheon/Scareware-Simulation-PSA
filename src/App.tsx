@@ -46,7 +46,8 @@ const App: React.FC = () => {
 const AppContent: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const { isMuted, toggleMuted } = useSpeechSettings();
+  // Speech settings are handled by the useSpeechSettings hook
+  // const { isMuted, toggleMuted } = useSpeechSettings();
   
   // Initialize class framework
   useClassFrameworkInit();

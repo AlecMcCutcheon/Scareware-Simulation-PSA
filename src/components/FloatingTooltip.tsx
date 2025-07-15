@@ -199,7 +199,7 @@ const FloatingTooltip: React.FC<FloatingTooltipProps> = ({ mousePosition }) => {
       document.removeEventListener('mozfullscreenchange', handleFullscreenChange);
       document.removeEventListener('MSFullscreenChange', handleFullscreenChange);
     };
-  }, []);
+  }, [isFullscreen, isMobile]);
 
   // Calculate smart positioning to keep tooltip on screen and avoid element overlap
   const calculatePosition = () => {
@@ -232,7 +232,7 @@ const FloatingTooltip: React.FC<FloatingTooltipProps> = ({ mousePosition }) => {
     // Start with mouse position (bottom right)
     let left = mousePosition.x + 20;
     let top: number | undefined = 32; // Default: 32px from top
-    let bottom: number | undefined = undefined;
+    // let bottom: number | undefined = undefined;
     
     // If we have a hovered element, try to avoid overlapping with it
     if (hoveredElement) {
@@ -241,8 +241,8 @@ const FloatingTooltip: React.FC<FloatingTooltipProps> = ({ mousePosition }) => {
       // Check if tooltip would overlap with the element
       const tooltipRight = left + tooltipWidth;
       const tooltipBottom = top + tooltipHeight;
-      const elementRight = elementRect.right;
-      const elementBottom = elementRect.bottom;
+      // const elementRight = elementRect.right;
+      // const elementBottom = elementRect.bottom;
       
       // If tooltip overlaps horizontally, try positioning to the left
       if (left < elementRect.right + elementPadding && tooltipRight > elementRect.left - elementPadding) {

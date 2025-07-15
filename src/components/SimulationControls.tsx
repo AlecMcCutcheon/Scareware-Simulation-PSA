@@ -86,7 +86,7 @@ const SimulationControls: React.FC<SimulationControlsProps> = ({
   });
   const [dragging, setDragging] = useState(false);
   const [resizing, setResizing] = useState(false);
-  const [snapping, setSnapping] = useState(false);
+  // const [snapping, setSnapping] = useState(false);
   const [dragStartTime, setDragStartTime] = useState(0);
   
   // Local storage state management
@@ -374,7 +374,7 @@ const SimulationControls: React.FC<SimulationControlsProps> = ({
           height: collapsed ? 'auto' : 'auto',
           cursor: dragging ? 'grabbing' : resizing ? 'ns-resize' : 'default',
           userSelect: dragging ? 'none' : 'auto',
-          transition: dragging || resizing ? 'none' : snapping ? 'height 0.3s ease' : 'box-shadow 0.2s',
+          transition: dragging || resizing ? 'none' : 'box-shadow 0.2s',
           pointerEvents: 'auto',
           isolation: 'isolate',
           overflow: 'visible',

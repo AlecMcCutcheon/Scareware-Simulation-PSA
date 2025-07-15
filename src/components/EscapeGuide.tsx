@@ -8,7 +8,7 @@ interface EscapeGuideProps {
 
 const EscapeGuide: React.FC<EscapeGuideProps> = ({ onRestart, onStop }) => {
   // Use safe mode - no browser hijacking applied
-  const { blockedAttempts, isFullscreen } = useSafeMode();
+  // const { blockedAttempts, isFullscreen } = useSafeMode();
   return (
     <div className="simulation-content escape-controls safe-zone dark-mode">
       <div className="escape-info">

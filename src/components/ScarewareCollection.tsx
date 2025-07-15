@@ -38,7 +38,7 @@ const ScarewareCollection: React.FC<ScarewareCollectionProps> = ({
     updateCurrentModeRef.current = updateCurrentMode;
   }, [startSpeech, stopSpeech, stopSpeechOnly, updateCurrentMode]);
   const [showContent, setShowContent] = useState(false);
-  const [threatLevel, setThreatLevel] = useState(0);
+  // const [threatLevel, setThreatLevel] = useState(0);
   const [countdown, setCountdown] = useState(600);
   const [loginStep, setLoginStep] = useState<'warning' | 'email' | 'password'>('warning');
   const [enteredEmail, setEnteredEmail] = useState('');
@@ -95,7 +95,7 @@ const ScarewareCollection: React.FC<ScarewareCollectionProps> = ({
           delayStart: 2000,
         }
   );
-  const blockedAttempts = hijack.blockedAttempts;
+  // const blockedAttempts = hijack.blockedAttempts;
   const isFullscreen = hijack.isFullscreen;
 
   // Add targeted fullscreen hijacking to scareware overlays
@@ -163,26 +163,26 @@ const ScarewareCollection: React.FC<ScarewareCollectionProps> = ({
     setShowContent(true);
     
     // Escalate threat level over time
-    const threatTimer = setInterval(() => {
-      setThreatLevel(prev => {
-        if (prev < 10) return prev + 1;
-        clearInterval(threatTimer);
-        return prev;
-      });
-    }, 2000);
+    // const threatTimer = setInterval(() => {
+    //   setThreatLevel(prev => {
+    //     if (prev < 10) return prev + 1;
+    //     clearInterval(threatTimer);
+    //     return prev;
+    //   });
+    // }, 2000);
 
     return () => {
-      clearInterval(threatTimer);
+      // clearInterval(threatTimer);
     };
   }, []);
 
-  const handleContinue = () => {
-    const phases = ['norton', 'microsoft', 'google', 'malwarebytes', 'generic', 'advanced', 'extreme'];
-    const currentIndex = phases.indexOf(currentPhase);
-    if (currentIndex < phases.length - 1) {
-      onAdvancePhase(phases[currentIndex + 1] as any);
-    }
-  };
+  // const handleContinue = () => {
+  //   const phases = ['norton', 'microsoft', 'google', 'malwarebytes', 'generic', 'advanced', 'extreme'];
+  //   const currentIndex = phases.indexOf(currentPhase);
+  //   if (currentIndex < phases.length - 1) {
+  //     onAdvancePhase(phases[currentIndex + 1] as any);
+  //   }
+  // };
 
   // For the Norton countdown timer
   const [nortonTimer, setNortonTimer] = useState(179); // 2:59 in seconds
@@ -202,13 +202,13 @@ const ScarewareCollection: React.FC<ScarewareCollectionProps> = ({
   const [itemsScanned, setItemsScanned] = React.useState(0);
   const [threatsDetected, setThreatsDetected] = React.useState(0);
   const [pupsDetected, setPupsDetected] = React.useState(0);
-  const [pumsDetected, setPumsDetected] = React.useState(0);
+  // const [pumsDetected, setPumsDetected] = React.useState(0);
   const [detectionsIgnored, setDetectionsIgnored] = React.useState(0);
   const [detectionsQuarantined, setDetectionsQuarantined] = React.useState(0);
   const [detectionsEscaped, setDetectionsEscaped] = React.useState(0);
   const [scanLog, setScanLog] = React.useState<string[]>([]);
   const [scanPhase, setScanPhase] = React.useState<'scanning' | 'escalate' | 'fail' | 'upgrade'>('scanning');
-  const [showUpgrade, setShowUpgrade] = React.useState(false);
+  // const [showUpgrade, setShowUpgrade] = React.useState(false);
   const [malwarebytesEscalation, setMalwarebytesEscalation] = React.useState(false); // NEW: Malwarebytes escalation state
   
   // ANCC Scareware countdown timer
@@ -494,7 +494,7 @@ const ScarewareCollection: React.FC<ScarewareCollectionProps> = ({
           } else if (randomDetection.counter === 'pupsDetected') {
             setPupsDetected(p => p + 1);
           } else if (randomDetection.counter === 'pumsDetected') {
-            setPumsDetected(p => p + 1);
+            // setPumsDetected(p => p + 1);
           }
           
           // Quarantined is calculated automatically by useEffect as threats + PUPs
@@ -677,7 +677,7 @@ const ScarewareCollection: React.FC<ScarewareCollectionProps> = ({
   // Malwarebytes failure phase
   React.useEffect(() => {
     if (currentPhase !== 'malwarebytes' || scanPhase !== 'fail') return;
-    setShowUpgrade(true);
+    // setShowUpgrade(true);
   }, [currentPhase, scanPhase]);
 
   // Malwarebytes cleanup on unmount
@@ -697,7 +697,7 @@ const ScarewareCollection: React.FC<ScarewareCollectionProps> = ({
       setItemsScanned(0);
       setThreatsDetected(0);
       setPupsDetected(0);
-      setPumsDetected(0);
+      // setPumsDetected(0);
       setDetectionsIgnored(0);
       setDetectionsQuarantined(0);
       setDetectionsEscaped(0);
@@ -706,7 +706,7 @@ const ScarewareCollection: React.FC<ScarewareCollectionProps> = ({
       setMalwarebytesEscalation(false); // Update escalation state back to normal
       // Update speech mode back to normal when phase resets
       updateCurrentModeRef.current('normal');
-      setShowUpgrade(false);
+      // setShowUpgrade(false);
       
       // Clear any existing intervals to ensure clean start
       if (scanIntervalRef.current) {
@@ -823,7 +823,7 @@ const ScarewareCollection: React.FC<ScarewareCollectionProps> = ({
               } else if (randomDetection.counter === 'pupsDetected') {
                 setPupsDetected(p => p + 1);
               } else if (randomDetection.counter === 'pumsDetected') {
-                setPumsDetected(p => p + 1);
+                // setPumsDetected(p => p + 1);
               }
               
               // Update scan log with detection
@@ -987,12 +987,12 @@ const ScarewareCollection: React.FC<ScarewareCollectionProps> = ({
           setItemsScanned(0);
           setThreatsDetected(0);
           setPupsDetected(0);
-          setPumsDetected(0);
+          // setPumsDetected(0);
           setDetectionsIgnored(0);
           setDetectionsQuarantined(0);
           setDetectionsEscaped(0);
           setScanLog([]);
-          setShowUpgrade(false);
+          // setShowUpgrade(false);
           
           // Clear any running intervals and timeouts
           if (scanIntervalRef.current) {
