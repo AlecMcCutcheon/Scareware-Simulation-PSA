@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import React, { useState, useEffect, useRef } from 'react';
 import { useBrowserHijacking } from '../hooks/useBrowserHijacking';
 import { useGlobalAudioContext } from '../contexts/GlobalAudioContext';
@@ -688,7 +689,7 @@ const ScarewareCollection: React.FC<ScarewareCollectionProps> = ({
   }, []);
 
   // Reset Malwarebytes state when phase changes
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+  /* eslint-disable-next-line react-hooks/exhaustive-deps */
   React.useEffect(() => {
     if (currentPhase === 'malwarebytes') {
       setScanProgress(0);

@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { useState, useEffect, useRef, useCallback } from 'react';
 
 // Speech settings key for localStorage
@@ -858,7 +859,7 @@ export const useGlobalAudio = () => {
   };
 
   // Listen for localStorage changes to stop speech when muted
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+  /* eslint-disable-next-line react-hooks/exhaustive-deps */
   useEffect(() => {
     const handleStorageChange = (e: StorageEvent) => {
       if (e.key === SPEECH_SETTINGS_KEY && e.newValue) {
