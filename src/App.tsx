@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { BrowserRouter as Router, Routes, Route, Navigate, useNavigate, useLocation } from 'react-router-dom';
+import { HashRouter as Router, Routes, Route, Navigate, useNavigate, useLocation } from 'react-router-dom';
 import ScarewareSimulation from './components/ScarewareSimulation';
 import EscapeGuide from './components/EscapeGuide';
 import SimulationControls from './components/SimulationControls';
