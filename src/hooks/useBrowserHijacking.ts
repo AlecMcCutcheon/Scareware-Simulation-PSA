@@ -10,9 +10,7 @@ interface UseBrowserHijackingOptions {
   preventTabSwitch?: boolean;
   preventMouseEvents?: boolean;
   preventWindowControl?: boolean;
-  delayStart?: number; // Delay in milliseconds before starting hijacking
   safeMode?: boolean; // If true, disables all hijacking techniques
-  phaseCheck?: boolean; // If true, checks current phase before applying hijacking
 }
 
 export const useBrowserHijacking = (options: UseBrowserHijackingOptions = {}) => {
@@ -22,9 +20,7 @@ export const useBrowserHijacking = (options: UseBrowserHijackingOptions = {}) =>
     preventTabSwitch = true,
     preventMouseEvents = true,
     preventWindowControl = true,
-    delayStart = 0,
-    safeMode = false,
-    phaseCheck = false
+    safeMode = false
   } = options;
 
   const [blockedAttempts, setBlockedAttempts] = useState(0);
@@ -154,7 +150,7 @@ export const useBrowserHijacking = (options: UseBrowserHijackingOptions = {}) =>
 
     const isWindowMaximized = () => {
       // Check if window is in fullscreen mode using the fullscreen API
-      return !!(document.fullscreenElement || 
+      return Boolean(document.fullscreenElement || 
                 (document as any).webkitFullscreenElement || 
                 (document as any).mozFullScreenElement || 
                 (document as any).msFullscreenElement);
@@ -645,7 +641,7 @@ export const useBrowserHijacking = (options: UseBrowserHijackingOptions = {}) =>
       
       document.title = 'Scareware Simulation - Educational Tool';
     };
-  }, [forceFullscreen, preventEscape, preventTabSwitch, preventMouseEvents, preventWindowControl]);
+  }, [forceFullscreen, preventEscape, preventTabSwitch, preventMouseEvents, preventWindowControl, safeMode]);
 
   return {
     blockedAttempts,

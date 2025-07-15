@@ -1,5 +1,4 @@
 import React from 'react';
-import { useSafeMode } from '../hooks/useSafeMode';
 
 interface EscapeGuideProps {
   onRestart: () => void;

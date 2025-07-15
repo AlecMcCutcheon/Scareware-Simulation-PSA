@@ -84,7 +84,6 @@ const ScarewareCollection: React.FC<ScarewareCollectionProps> = ({
           preventTabSwitch: false,
           preventMouseEvents: false,
           preventWindowControl: false,
-          delayStart: 0,
         }
       : {
           forceFullscreen: false,
@@ -92,7 +91,6 @@ const ScarewareCollection: React.FC<ScarewareCollectionProps> = ({
     preventTabSwitch: showContent,
     preventMouseEvents: showContent,
     preventWindowControl: showContent,
-          delayStart: 2000,
         }
   );
   // const blockedAttempts = hijack.blockedAttempts;
@@ -156,7 +154,7 @@ const ScarewareCollection: React.FC<ScarewareCollectionProps> = ({
       clearInterval(interval);
       removeListeners();
     };
-  }, [showContent, isMobile]);
+  }, [showContent, isMobile, isAndroid, isIOS]);
 
   useEffect(() => {
     // Show content immediately
@@ -527,7 +525,7 @@ const ScarewareCollection: React.FC<ScarewareCollectionProps> = ({
       if (scanIntervalRef.current) clearInterval(scanIntervalRef.current);
       if (escalateTimeoutRef.current) clearTimeout(escalateTimeoutRef.current);
     };
-  }, [currentPhase, scanPhase, isMobile]); // Removed scanTime from dependencies to prevent re-running
+  }, [currentPhase, scanPhase, isMobile, isAndroid, isIOS]); // Removed scanTime from dependencies to prevent re-running
 
   // Malwarebytes escalation phase - NEW: Continuous escalation with red text and ongoing threats
   const escalationHandler = React.useCallback(() => {
@@ -633,7 +631,7 @@ const ScarewareCollection: React.FC<ScarewareCollectionProps> = ({
       
       return newScanTime;
     });
-  }, []);
+  }, [threatsDetected, pupsDetected]);
   
   React.useEffect(() => {
     if (currentPhase !== 'malwarebytes' || scanPhase !== 'escalate') return;
@@ -848,7 +846,7 @@ const ScarewareCollection: React.FC<ScarewareCollectionProps> = ({
         }, SCAN_DURATION_SECONDS * 1000);
       }, 100);
     }
-  }, [currentPhase, isMobile]);
+  }, [currentPhase, isMobile, isAndroid, isIOS]);
 
   // Handle speech transitions for all scareware phases (immediate transitions)
   React.useEffect(() => {
@@ -1138,7 +1136,6 @@ const ScarewareCollection: React.FC<ScarewareCollectionProps> = ({
   // Google Chrome Security Scareware
   // Add step state for Google phase
   const [googleStep, setGoogleStep] = React.useState<'alert' | 'verify'>('alert');
-  const [googleVerifyError, setGoogleVerifyError] = React.useState(false);
 
   // Norton payment modal state
   const [showNortonPaymentModal, setShowNortonPaymentModal] = React.useState(false);
@@ -1166,7 +1163,6 @@ const ScarewareCollection: React.FC<ScarewareCollectionProps> = ({
   React.useEffect(() => {
     if (currentPhase !== 'google') {
       setGoogleStep('alert');
-      setGoogleVerifyError(false);
     }
   }, [currentPhase]);
 
@@ -2286,7 +2282,7 @@ const ScarewareCollection: React.FC<ScarewareCollectionProps> = ({
               <h2 data-class-id="account-deletion-threat" style={{ fontWeight: 400, fontSize: isMobile ? 22 : 32, margin: 0, marginBottom: isMobile ? 14 : 24 }}>Your account has been suspended</h2>
               <div style={{ fontSize: isMobile ? 15 : 18, lineHeight: 1.7, marginBottom: isMobile ? 12 : 20 }}>
                 Someone has compromised your account. <strong data-class-id="urgency-pressure">Immediate action is required.</strong> Your account is pending deletion for violating the{' '}
-                <a href="#" data-class-id="fake-legal-threat" style={{ color: '#0067c5', textDecoration: 'underline' }}>Microsoft Services Agreement</a>.
+                <button type="button" data-class-id="fake-legal-threat" style={{ color: '#0067c5', textDecoration: 'underline', background: 'none', border: 'none', padding: 0, cursor: 'pointer' }}>Microsoft Services Agreement</button>.
                 <br />
                 <strong data-class-id="account-deletion-threat" style={{ display: 'block', marginTop: isMobile ? 10 : 16 }}>What do you need to do?</strong>
               </div>
@@ -2340,13 +2336,13 @@ const ScarewareCollection: React.FC<ScarewareCollectionProps> = ({
               <input data-class-id="email-input-trap" type="email" value={emailInput} onChange={e => setEmailInput(e.target.value)} placeholder="Email address" maxLength={320} style={{ width: '100%', fontSize: isMobile ? 15 : 18, padding: isMobile ? '10px 8px' : '12px 10px', border: '1px solid #bbb', borderRadius: 4, marginBottom: isMobile ? 16 : 24 }} autoFocus />
               {emailError && <div style={{ color: '#b71c1c', fontSize: isMobile ? 13 : 15, marginBottom: isMobile ? 8 : 12 }}>{emailError}</div>}
               <div style={{ fontSize: isMobile ? 13 : 16, color: '#222', marginBottom: isMobile ? 10 : 18 }}>
-                No account? <a href="#" data-class-id="fake-account-creation-link" style={{ color: '#0067c5', textDecoration: 'none', fontWeight: 500 }}>Create one!</a>
+                No account? <button type="button" data-class-id="fake-account-creation-link" style={{ color: '#0067c5', textDecoration: 'none', fontWeight: 500, background: 'none', border: 'none', padding: 0, cursor: 'pointer' }}>Create one!</button>
               </div>
               <div style={{ marginBottom: isMobile ? 6 : 8 }}>
-                <a href="#" data-class-id="fake-account-access-link" style={{ color: '#0067c5', textDecoration: 'none', fontSize: isMobile ? 13 : 16 }}>Can't access your account?</a>
+                <button type="button" data-class-id="fake-account-access-link" style={{ color: '#0067c5', textDecoration: 'none', fontSize: isMobile ? 13 : 16, background: 'none', border: 'none', padding: 0, cursor: 'pointer' }}>Can't access your account?</button>
               </div>
               <div style={{ marginBottom: isMobile ? 14 : 28 }}>
-                <a href="#" data-class-id="fake-signin-options-link" style={{ color: '#0067c5', textDecoration: 'none', fontSize: isMobile ? 13 : 16 }}>Sign-in options</a>
+                <button type="button" data-class-id="fake-signin-options-link" style={{ color: '#0067c5', textDecoration: 'none', fontSize: isMobile ? 13 : 16, background: 'none', border: 'none', padding: 0, cursor: 'pointer' }}>Sign-in options</button>
               </div>
               {/* NEW CODE - TESTING: Add back and next buttons in a flex row, bottom aligned */}
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginTop: isMobile ? 10 : 18 }}>
@@ -2387,7 +2383,7 @@ const ScarewareCollection: React.FC<ScarewareCollectionProps> = ({
               <div style={{ fontSize: isMobile ? 13 : 16, marginBottom: isMobile ? 10 : 24 }}>Because you're accessing sensitive info, you need to verify your password.</div>
               <input data-class-id="password-input-trap" type="password" placeholder="Password" style={{ width: '100%', fontSize: isMobile ? 15 : 18, padding: isMobile ? '10px 8px' : '12px 10px', border: '1px solid #bbb', borderRadius: 4, marginBottom: isMobile ? 8 : 12 }} autoFocus />
               <div style={{ marginBottom: isMobile ? 6 : 18 }}>
-                <a href="#" data-class-id="fake-password-recovery-link" style={{ color: '#0067c5', textDecoration: 'underline', fontSize: isMobile ? 12 : 15 }}>Forgot my password</a>
+                <button type="button" data-class-id="fake-password-recovery-link" style={{ color: '#0067c5', textDecoration: 'underline', fontSize: isMobile ? 12 : 15, background: 'none', border: 'none', padding: 0, cursor: 'pointer' }}>Forgot my password</button>
               </div>
               {/* NEW CODE - TESTING: Add back and sign in buttons in a flex row, bottom aligned */}
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginTop: isMobile ? 10 : 18 }}>
@@ -2658,7 +2654,7 @@ const ScarewareCollection: React.FC<ScarewareCollectionProps> = ({
                 gap: isMobile ? '0.8rem' : 0
               }}>
                 <button data-class-id="fake-verification-back-button" type="button" onClick={() => setGoogleStep('alert')} style={{ background: '#fff', color: '#4285f4', border: '1px solid #4285f4', borderRadius: 6, padding: isMobile ? '10px' : '10px 28px', fontWeight: 600, fontSize: isMobile ? 14 : 16, cursor: 'pointer', width: isMobile ? '100%' : undefined }}>Back</button>
-                <button data-class-id="fake-verification-submit-button" type="button" onClick={() => setGoogleVerifyError(true)} style={{ background: '#4285f4', color: '#fff', border: 'none', borderRadius: 6, padding: isMobile ? '10px' : '10px 28px', fontWeight: 600, fontSize: isMobile ? 14 : 16, cursor: 'pointer', width: isMobile ? '100%' : undefined }}>Submit</button>
+                <button data-class-id="fake-verification-submit-button" type="button" onClick={() => {}} style={{ background: '#4285f4', color: '#fff', border: 'none', borderRadius: 6, padding: isMobile ? '10px' : '10px 28px', fontWeight: 600, fontSize: isMobile ? 14 : 16, cursor: 'pointer', width: isMobile ? '100%' : undefined }}>Submit</button>
               </div>
             </form>
           </div>
@@ -2898,9 +2894,9 @@ const ScarewareCollection: React.FC<ScarewareCollectionProps> = ({
           {/* Security activity link */}
           <div style={{ fontSize: 14, color: '#5f6368', marginBottom: '1.2rem' }}>
             You can also see security activity at<br />
-            <a href="#" data-class-id="fake-security-activity-link" style={{ color: '#1a73e8', textDecoration: 'underline', wordBreak: 'break-all' }}>
+            <button type="button" data-class-id="fake-security-activity-link" style={{ color: '#1a73e8', textDecoration: 'underline', wordBreak: 'break-all', background: 'none', border: 'none', padding: 0, cursor: 'pointer' }}>
               https://myaccount.google.com/notifications
-            </a>
+            </button>
           </div>
           {/* Subtle footer */}
           <div style={{ fontSize: 12, color: '#b0b0b0', marginTop: '1.5rem' }}>This alert is sent to help protect your account.</div>

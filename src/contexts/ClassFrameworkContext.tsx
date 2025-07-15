@@ -3,7 +3,6 @@ import {
   ClassFrameworkState, 
   ClassDefinition, 
   ElementClass, 
-  ClassNote,
   TooltipPosition 
 } from '../types/ClassFramework';
 

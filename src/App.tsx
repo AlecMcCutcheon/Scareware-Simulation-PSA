@@ -4,7 +4,6 @@ import ScarewareSimulation from './components/ScarewareSimulation';
 import EscapeGuide from './components/EscapeGuide';
 import SimulationControls from './components/SimulationControls';
 import { useExitFullscreen } from './hooks/useExitFullscreen';
-import { useSpeechSettings } from './hooks/useSpeechSettings';
 import { GlobalAudioProvider } from './contexts/GlobalAudioContext';
 import { ClassFrameworkProvider } from './contexts/ClassFrameworkContext';
 import FloatingTooltip from './components/FloatingTooltip';
