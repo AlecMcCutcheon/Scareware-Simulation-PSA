@@ -1,4 +1,4 @@
-# 🚨 Scareware Simulation - Educational Tool
+# 🚨 Scareware Simulation - Educational Tool (WIP)
 
 A safe, educational website that simulates scareware techniques to help users understand and avoid real threats.
 
